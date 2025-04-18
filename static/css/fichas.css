@@ -1,0 +1,547 @@
+:root {
+  /* Cores temáticas com gradientes do Solo Leveling */
+  --bg-dark: linear-gradient(135deg, #0f0f13 0%, #1a1a2e 100%);
+  --bg-darker: linear-gradient(145deg, #0a0a0d 0%, #141429 100%);
+  --bg-item: linear-gradient(145deg, #1a1a24 0%, #23233a 100%);
+  --bg-input: #252535;
+  --primary: linear-gradient(135deg, #6a5acd 0%, #9370db 100%);
+  --primary-solid: #6a5acd;
+  --primary-hover: linear-gradient(135deg, #7b68ee 0%, #9b7dff 100%);
+  --secondary: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  --secondary-hover: #45a049;
+  --danger: linear-gradient(135deg, #ff4d4d 0%, #ff6b6b 100%);
+  --danger-hover: #ff3333;
+  --text: #f0f0f0;
+  --text-muted: #b0b0b0;
+  --border: #3a3a4a;
+  --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  --glow: 0 0 15px rgba(106, 90, 205, 0.6);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Estilos base */
+body {
+  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
+
+/* Container principal */
+.container {
+  display: flex;
+  max-width: 1200px;
+  margin: 20px auto;
+  background: var(--bg-darker);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  min-height: calc(100vh - 40px);
+  transition: var(--transition);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background: var(--bg-item);
+  padding: 20px 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+  color: var(--primary-solid);
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  text-shadow: 0 0 5px var(--primary-solid);
+  letter-spacing: 1px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 20px;
+}
+
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 15px;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: var(--primary);
+  transform: translateX(-10px);
+  transition: var(--transition);
+  opacity: 0;
+}
+
+.sidebar button:hover {
+  background: rgba(106, 90, 205, 0.1);
+  transform: translateX(5px);
+}
+
+.sidebar button:hover::before,
+.sidebar button.active::before {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.sidebar button.active {
+  background: rgba(106, 90, 205, 0.2);
+  color: var(--primary-solid);
+  font-weight: 600;
+}
+
+/* Conteúdo principal */
+.content {
+  flex: 1;
+  padding: 30px;
+  background: var(--bg-dark);
+  position: relative;
+  overflow-y: auto;
+}
+
+.tab {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.tab.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cabeçalhos */
+h1 {
+  margin-top: 0;
+  color: var(--primary-solid);
+  font-size: 2rem;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+.subtitulo {
+  background: rgba(106, 90, 205, 0.1);
+  padding: 15px 20px;
+  border-left: 3px solid var(--primary-solid);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 25px 0 15px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+/* Formulários */
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.form-group > div {
+  flex: 1 1 auto;
+}
+
+/* Inputs */
+.input-small {
+  max-width: 80px !important;
+  padding: 10px 12px !important;
+}
+
+.input-medium {
+  max-width: 120px !important;
+}
+
+#lutador .form-group {
+  align-items: center;
+  gap: 10px;
+}
+
+#lutador input[type="text"] {
+  width: calc(50% - 20px) !important;
+  min-width: 200px;
+  margin: 0 !important;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 15px;
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary-solid);
+  box-shadow: var(--glow);
+}
+
+/* Botões gerais */
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: rgb(221, 0, 0);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+
+.btn-secondary {
+  background: var(--secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: var(--secondary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: rgb(255, 0, 0);
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover);
+  transform: translateY(-2px);
+}
+
+.btn-validar {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Botão de Adicionar Maestria */
+.btn-add-maestria {
+  background: var(--primary);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-add-maestria::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-hover);
+  z-index: -1;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.btn-add-maestria:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+
+.btn-add-maestria:hover::before {
+  opacity: 1;
+}
+
+.btn-add-maestria i {
+  font-size: 1.1rem;
+}
+
+/* Maestrias */
+#maestrias-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: var(--bg-item);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.maestria-item {
+  background: linear-gradient(145deg, #252535 0%, #2a2a3a 100%);
+  padding: 12px 15px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  transition: var(--transition);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.maestria-item:hover {
+  box-shadow: var(--glow);
+  border-color: var(--primary-solid);
+  transform: translateY(-2px);
+}
+
+.maestria-item input {
+  flex: 1 1 200px;
+  min-width: 160px;
+  padding: 10px 15px;
+}
+
+.remove-maestria {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.remove-maestria:hover {
+  background-color: rgba(255, 77, 77, 0.1);
+  transform: scale(1.1);
+  color: #ff3333;
+}
+
+/* Campos dinâmicos */
+.campo-dinamico {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.campo-dinamico > * {
+  flex: 1 1 200px;
+}
+
+/* Efeitos */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  background: var(--primary);
+  z-index: -1;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.glow-effect:hover::after {
+  opacity: 0.4;
+  filter: blur(4px);
+}
+
+.status-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--glow);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: var(--transition);
+  z-index: 1000;
+}
+
+.status-indicator.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animação pulsar */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(106, 90, 205, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(106, 90, 205, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(106, 90, 205, 0);
+  }
+}
+
+.pulse-effect {
+  animation: pulse 1.5s infinite;
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .container {
+    flex-direction: column;
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0 10px;
+  }
+
+  .sidebar button {
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+
+  .content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  #lutador .form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #lutador input[type="text"] {
+    width: 100% !important;
+    min-width: 100%;
+  }
+
+  .input-small,
+  .input-medium {
+    max-width: 100% !important;
+  }
+
+  .maestria-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .maestria-item input {
+    min-width: 100%;
+  }
+
+  #maestrias-container {
+    padding: 15px;
+  }
+
+  .campo-dinamico > * {
+    flex: 1 1 100%;
+  }
+}

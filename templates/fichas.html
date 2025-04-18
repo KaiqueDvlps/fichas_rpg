@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ficha do Jogador</title>
+    <link rel="stylesheet" href="/static/css/fichas.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- MENU LATERAL -->
+        <div class="sidebar">
+            <button class="tab-btn active" onclick="showTab('info', event)">Info Geral</button>
+            <button class="tab-btn" onclick="showTab('classe', event)">Classe</button>
+            <button class="tab-btn" onclick="showTab('nivel', event)">Nível e Rank</button>
+            <button class="tab-btn" onclick="showTab('lado', event)">Lado</button>
+            <button class="tab-btn" onclick="showTab('maestria', event)">Maestrias</button>
+            <button class="tab-btn" onclick="showTab('lutador', event)">Tipo de Lutador</button>
+            <button class="tab-btn" onclick="showTab('titulos', event)">Títulos</button>
+            <button class="tab-btn" onclick="showTab('passivas', event)">Passivas</button>
+            <button class="tab-btn" onclick="showTab('habilidades', event)">Habilidades</button>
+            <button class="tab-btn" onclick="showTab('atributos', event)">Atributos</button>
+            <button class="tab-btn" onclick="showTab('equipamento', event)">Equipamento</button>
+            <button class="tab-btn" onclick="showTab('runas', event)">Runas</button>
+        </div>
+
+        <!-- CONTEÚDO -->
+        <div class="content">
+            <div class="subtitulo">
+                FICHA - {{ usuario.nome }} ({{ usuario.digitos_telefone }})<br />
+                Personagem: {{ ficha.nome_personagem }}
+            </div>
+
+            <!-- ABA 1 -->
+            <div id="info" class="tab active">
+                <h2>Informações Gerais</h2>
+                <p>Essas informações são fixas e foram cadastradas previamente.</p>
+            </div>
+
+            <!-- ABA 2 -->
+            <div id="classe" class="tab">
+                <h2>Classe</h2>
+                <label>Classe:</label>
+                <input type="text" name="classe" />
+                <label>Classe Avançada:</label>
+                <input type="text" name="classe_avancada" />
+            </div>
+
+            <!-- ABA 3 - NÍVEL E RANK (SIMPLIFICADA) -->
+            <div id="nivel" class="tab">
+                <h2>Nível e Rank</h2>
+                
+                <label for="nivel">Nível:</label>
+                <input type="number" id="nivel" name="nivel" min="1" max="150" />
+                
+                <label for="experiencia">Experiência:</label>
+                <input type="text" id="experiencia" name="experiencia" placeholder="Ex: 500/5000" />
+                
+                <label for="rank-select">Selecione seu Rank:</label>
+                <select id="rank-select" name="rank-select">
+                    <option value="">Selecione</option>
+                    <option value="E">Rank E</option>
+                    <option value="D">Rank D</option>
+                    <option value="C">Rank C</option>
+                    <option value="B">Rank B</option>
+                    <option value="A">Rank A</option>
+                    <option value="S">Rank S</option>
+                </select>
+            </div>
+
+            <!-- ABA 4 -->
+            <div id="lado" class="tab">
+                <h2>Lado</h2>
+                <label>Escolha seu lado:</label>
+                <select name="lado" {% if ficha and not pode_mudar_lado %}disabled{% endif %}>
+                    <option value="nenhum" {% if ficha.lado == 'nenhum' %}selected{% endif %}>Nenhum</option>
+                    <option value="igualitario" {% if ficha.lado == 'igualitario' %}selected{% endif %}>Igualitário</option>
+                    <option value="guilda" {% if ficha.lado == 'guilda' %}selected{% endif %}>Guilda</option>
+                    <option value="associacao" {% if ficha.lado == 'associacao' %}selected{% endif %}>Associação</option>
+                </select>
+                {% if ficha %}
+                    <p>Última mudança: {{ ficha.lado_ultima_mudanca.strftime('%d/%m/%Y %H:%M') }}</p>
+                    {% if not pode_mudar_lado %}
+                        <p style="color: red;">Você só poderá mudar de lado após 72 horas da última mudança.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+          <!-- ABA 5 -->
+<div id="maestria" class="tab">
+    <h2>Maestrias</h2>
+    <div id="maestrias-container">
+        <div class="maestria-item">
+            <input type="text" name="nome_maestria[]" placeholder="Nome da Maestria">
+            <input type="text" name="treino[]" placeholder="Treino (Ex: 0/20)">
+            <input type="text" name="duelo[]" placeholder="Duelo (Ex: 0/5)">
+            <input type="text" name="boss[]" placeholder="Boss (Ex: 0/3)">
+            <input type="text" name="nivel[]" placeholder="Nível (Ex: 1)">
+            <button type="button" class="remove-maestria" onclick="removerMaestria(this)">🗑️</button>
+        </div>
+    </div>
+    <button type="button" id="add-maestria">➕ Adicionar Maestria</button>
+</div>
+
+<!-- ABA 6 -->
+<div id="lutador" class="tab">
+    <h2>Tipo de Lutador</h2>
+    <div id="lutadores-container">
+        <!-- Campos vão ser inseridos aqui -->
+    </div>
+    <button type="button" onclick="adicionarTipoLutador()" class="btn-adicionar">
+        ➕ Adicionar Tipo
+    </button>
+</div>
+
+
+
+
+    <script>
+        function showTab(tabId, event) {
+            document.querySelectorAll(".tab").forEach((tab) => tab.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            if (event && event.target) {
+                event.target.classList.add("active");
+            }
+        }
+    </script>
+    <script src="/static/js/maestria.js"></script>
+    <script src="/static/js/tipo_lutador.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="/static/css/registro.css" />
+  </head>
+  <body>
+    <h1>Cadastro de Player</h1>
+    <form action="/register" method="POST">
+      <input type="text" name="nome" placeholder="Nome Player" required /><br />
+      <input type="password" name="senha" placeholder="Senha" required /><br />
+      <select name="tipo" required>
+        <option value="jogador">Jogador</option>
+        <option value="adm">Administrador</option>
+        <option value="adm_master">ADM Master</option></select
+      ><br />
+      <input
+        type="text"
+        name="digitos_telefone"
+        placeholder="3 últimos dígitos do celular"
+        pattern="\d{3}"
+        maxlength="3"
+        required
+      /><br />
+      <input
+        type="text"
+        name="nome_personagem"
+        placeholder="Nome do personagem"
+        required
+      /><br />
+      <button type="submit">Cadastrar</button>
+    </form>
+  </body>
+</html>

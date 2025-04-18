@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Ficha de {{ ficha.nome_personagem if ficha else 'Sem Ficha' }}
+    </title>
+  </head>
+  <body>
+    <h1>
+      Ficha de {{ ficha.nome_personagem if ficha else usuario.nome_personagem }}
+    </h1>
+
+    {% if ficha %}
+    <p><strong>Raça:</strong> {{ ficha.raca }}</p>
+    <p><strong>Classe:</strong> {{ ficha.classe }}</p>
+    <p><strong>Nível:</strong> {{ ficha.nivel }}</p>
+    <p><strong>Descrição:</strong> {{ ficha.descricao }}</p>
+    <p><strong>Lado:</strong> {{ ficha.lado }}</p>
+    <p><strong>Última edição:</strong> {{ ficha.ultima_edicao }}</p>
+    {% else %}
+    <p>Essa ficha ainda não foi criada.</p>
+    {% endif %}
+
+    <h3>Últimos registros de edição:</h3>
+    {% if logs %}
+    <ul>
+      {% for log in logs %}
+      <li>{{ log.data }} - Motivo: {{ log.motivo }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Sem registros ainda.</p>
+    {% endif %}
+
+    <a href="{{ url_for('editar_ficha', usuario_id=usuario.id) }}"
+      >Editar Ficha</a
+    >
+  </body>
+</html>
