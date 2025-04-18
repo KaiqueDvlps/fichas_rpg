@@ -1,0 +1,59 @@
+# Byte-compiled / cache
+
+_pycache_/
+_.py[cod]
+_.pyo
+
+# Virtual environment
+
+venv/
+env/
+ENV/
+.venv/
+
+# Flask instance folder
+
+instance/
+_.db
+_.sqlite3
+
+# IDEs and editors
+
+.vscode/
+.idea/
+\*.swp
+
+# Logs
+
+\*.log
+
+# Environment variables
+
+.env
+\*.env
+
+# Coverage reports
+
+htmlcov/
+.coverage
+.coverage.\*
+
+# Pytest
+
+.pytest_cache/
+
+# Build
+
+build/
+dist/
+\*.egg-info/
+
+# Docker (opcional, se usar)
+
+_.pid
+_.bak
+
+# OS files
+
+.DS_Store
+Thumbs.db
