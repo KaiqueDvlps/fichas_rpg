@@ -112,8 +112,72 @@
     </button>
 </div>
 
+<!-- ABA 7 - TÍTULOS -->
+<div id="titulos" class="tab">
+    <h2>Títulos</h2>
+    <div id="titulos-container">
+        <!-- Títulos adicionados vão aparecer aqui -->
+    </div>
+    <button type="button" class="btn-add-maestria" onclick="adicionarTitulo()">
+        <i>+</i> Adicionar Título
+    </button>
+</div>
+
+<!-- ABA 8 - PASSIVAS -->
+<div id="passivas" class="tab">
+    <h2>Passivas</h2>
+    <div id="passivas-container">
+        <!-- Passivas adicionadas vão aparecer aqui -->
+    </div>
+    <button type="button" class="btn-add-maestria" onclick="adicionarPassiva()">
+        <i>+</i> Adicionar Passiva
+    </button>
+</div>
+
+<!-- ABA 9 - HABILIDADES -->
+<div id="habilidades" class="tab">
+    <h2>Habilidades</h2>
+    <div id="habilidades-container">
+        <!-- Habilidades adicionadas vão aparecer aqui -->
+    </div>
+    <button type="button" class="btn-add-maestria" onclick="adicionarHabilidade()">
+        <i>+</i> Adicionar Habilidade
+    </button>
+</div>
 
 
+    <!-- ABA 10 - ATRIBUTOS (VERSÃO MODIFICADA PARA MP) -->
+<div id="atributos" class="tab">
+    <h2>Atributos</h2>
+    {% for atributo in ['força', 'agilidade', 'resistencia', 'sentidos', 'inteligencia', 'poder_magico', 'mp'] %}
+    <div class="atributo-box" data-atributo="{{ atributo }}">
+        {% if atributo == 'mp' %}
+        <!-- VERSÃO ESPECIAL PARA MP -->
+        <label class="mp-label"><strong>MP</strong></label>
+        <div class="mp-display">
+            <span class="mp-text">Seu MP atual é: </span>
+            <span class="calc-text mp-value">0</span>
+        </div>
+        {% else %}
+        <!-- VERSÃO NORMAL PARA OUTROS ATRIBUTOS -->
+        <label><strong>{{ atributo|capitalize }}</strong></label>
+        <div class="atributo-inputs">
+            <input 
+                type="number" 
+                class="base-input" 
+                placeholder="Valor base"
+                min="0"
+            />
+            <div class="bonus-container"></div>
+            <button type="button" class="btn-add-bonus">+ Bônus</button>
+        </div>
+        <div class="resultado">
+            Resultado: <span class="calc-text">0</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
 
     <script>
         function showTab(tabId, event) {
@@ -127,6 +191,14 @@
     </script>
     <script src="/static/js/maestria.js"></script>
     <script src="/static/js/tipo_lutador.js"></script>
+    <script src="/static/js/titulos.js"></script>
+    <script src="/static/js/passivas.js"></script>
+    <script src="/static/js/habilidades.js"></script>
+    <script src="/static/js/atributos.js"></script>
+
+
+
+
 
 </body>
 </html>
