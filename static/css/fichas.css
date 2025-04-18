@@ -545,3 +545,10 @@ textarea:focus {
     flex: 1 1 100%;
   }
 }
+
+#rank-select {
+  width: 15%;
+}
+#nivel-input {
+  width: 20%;
+}
