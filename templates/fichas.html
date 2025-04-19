@@ -19,7 +19,8 @@
             <button class="tab-btn" onclick="showTab('passivas', event)">Passivas</button>
             <button class="tab-btn" onclick="showTab('habilidades', event)">Habilidades</button>
             <button class="tab-btn" onclick="showTab('atributos', event)">Atributos</button>
-            <button class="tab-btn" onclick="showTab('equipamento', event)">Equipamento</button>
+            <button class="tab-btn" onclick="showTab('equipamento-container', event)">Equipamento</button>
+            <button class="tab-btn" onclick="showTab('inventario', event)">Inventario</button>
             <button class="tab-btn" onclick="showTab('runas', event)">Runas</button>
         </div>
 
@@ -98,7 +99,7 @@
             <button type="button" class="remove-maestria" onclick="removerMaestria(this)">🗑️</button>
         </div>
     </div>
-    <button type="button" id="add-maestria">➕ Adicionar Maestria</button>
+    <button type="button" class="btn-add-maestria">Adicionar Maestria</button>
 </div>
 
 <!-- ABA 6 -->
@@ -159,6 +160,7 @@
             <span class="calc-text mp-value">0</span>
         </div>
         {% else %}
+        
         <!-- VERSÃO NORMAL PARA OUTROS ATRIBUTOS -->
         <label><strong>{{ atributo|capitalize }}</strong></label>
         <div class="atributo-inputs">
@@ -178,6 +180,119 @@
     </div>
     {% endfor %}
 </div>
+                    <! Aba 11 Equipamento>
+<div id="equipamento-container" class="tab">
+  <h2>Equipamentos</h2>
+
+  <!-- Slot de Cabeça -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Cabeça</h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Elmo de Ferro" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus (Ex: +10 Força)" class="input-equipamento-bonus">
+    </div>
+  </div>
+
+  <!-- Slot de Corpo -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Corpo</h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Armadura Leve" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Capa de Couro" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+  </div>
+
+  <!-- Acessórios -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Acessórios <small>(Máx 2 do mesmo tipo, exceto Anel da Associação)</small></h3>
+    <div id="container-acessorios">
+      <!-- Acessórios serão adicionados aqui -->
+    </div>
+    <button id="btn-add-acessorio" class="btn-add-maestria">Adicionar Acessório</button>
+  </div>
+
+  <!-- Itens de Apoio -->
+  <div class="equipamento-grupo">
+    <h3>Itens de Apoio</h3>
+    <div id="container-itemapoio">
+      <!-- Itens de apoio serão adicionados aqui -->
+    </div>
+    <button id="btn-add-itemapoio" class="btn-add-maestria">Adicionar Item de Apoio</button>
+  </div>
+
+  <!-- Pernas -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Pernas</h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Calça de Couro" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Joelheira de Aço" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+  </div>
+
+  <!-- Pés -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Pés</h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Botas de Velocidade" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+  </div>
+
+  <!-- Mãos -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Mãos</h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Luvas de Couro" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+  </div>
+
+  <!-- Armas -->
+  <div class="equipamento-grupo">
+    <h3>Slot de Armas <small>[Armas grandes ocupam dois slots]</small></h3>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Espada Longa" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+    <div class="slot-equipamento">
+      <input type="text" placeholder="Ex: Escudo Médio" class="input-equipamento-nome">
+      <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+    </div>
+  </div>
+</div>
+            <! aba 12 Inventario>
+<div id="inventario" class="tab">
+  <div class="inventario-container">
+    <h3>💰 Wons:</h3>
+    <input type="number" id="wons" placeholder="Digite a quantidade de Wons" min="0" class="input-wons"/>
+
+    <button class="btn-add-item" class="btn-add-maestria">Adcionar Item</button>
+
+    <div id="lista-itens" class="lista-itens">
+      <!-- Itens adicionados aparecerão aqui -->
+    </div>
+  </div>
+</div>
+<!-- Modal personalizado para perguntas da aba 12 -->
+<div id="custom-prompt-overlay" class="custom-prompt-overlay">
+  <div class="custom-prompt">
+    <div class="custom-prompt-title">Tipo de Item</div>
+    <div class="custom-prompt-message">O item é consumível?</div>
+    <div class="custom-prompt-buttons">
+      <button id="custom-prompt-yes" class="custom-prompt-btn">Sim</button>
+      <button id="custom-prompt-no" class="custom-prompt-btn btn-no">Não</button>
+    </div>
+  </div>
+</div>
+
 
     <script>
         function showTab(tabId, event) {
@@ -189,16 +304,24 @@
             }
         }
     </script>
+        <! ALERTA DO EQUIPAMENTO>
+        <div id="custom-alert-overlay" class="custom-alert-overlay">
+    <div class="custom-alert">
+        <div class="custom-alert-title">Atenção</div>
+        <div class="custom-alert-message" id="custom-alert-message"></div>
+        <button class="custom-alert-button" id="custom-alert-button">OK</button>
+    </div>
+</div>
+
+
+            <!SOMENTE JS>
     <script src="/static/js/maestria.js"></script>
     <script src="/static/js/tipo_lutador.js"></script>
     <script src="/static/js/titulos.js"></script>
     <script src="/static/js/passivas.js"></script>
     <script src="/static/js/habilidades.js"></script>
     <script src="/static/js/atributos.js"></script>
-
-
-
-
-
+    <script src="/static/js/equipamentos.js"></script>
+    <script src="/static/js/inventario.js"></script>
 </body>
 </html>

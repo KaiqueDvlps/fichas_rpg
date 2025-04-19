@@ -1,3 +1,6 @@
+/* ==================== */
+/* VARIÁVEIS GLOBAIS    */
+/* ==================== */
 :root {
   /* Cores temáticas com gradientes do Solo Leveling */
   --bg-dark: linear-gradient(135deg, #0f0f13 0%, #1a1a2e 100%);
@@ -21,8 +24,10 @@
   --radius-lg: 12px;
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+/* ==================== */
+/* ESTILOS GERAIS       */
+/* ==================== */
 
-/* Estilos base */
 body {
   font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-dark);
@@ -34,7 +39,9 @@ body {
   background-attachment: fixed;
 }
 
-/* Container principal */
+/* ==================== */
+/* LAYOUT PRINCIPAL     */
+/* ==================== */
 .container {
   display: flex;
   max-width: 1200px;
@@ -47,7 +54,9 @@ body {
   transition: var(--transition);
 }
 
-/* Sidebar */
+/* ==================== */
+/* BARRA LATERAL        */
+/* ==================== */
 .sidebar {
   width: 240px;
   background: var(--bg-item);
@@ -56,7 +65,6 @@ body {
   position: relative;
   z-index: 1;
 }
-
 .sidebar-header {
   padding: 0 20px 20px;
   border-bottom: 1px solid var(--border);
@@ -126,7 +134,9 @@ body {
   font-weight: 600;
 }
 
-/* Conteúdo principal */
+/* ==================== */
+/* CONTEÚDO PRINCIPAL   */
+/* ==================== */
 .content {
   flex: 1;
   padding: 30px;
@@ -135,6 +145,9 @@ body {
   overflow-y: auto;
 }
 
+/* ==================== */
+/* ABAS                 */
+/* ==================== */
 .tab {
   display: none;
   animation: fadeIn 0.5s ease;
@@ -155,7 +168,9 @@ body {
   }
 }
 
-/* Cabeçalhos */
+/* ==================== */
+/* TIPOGRAFIA           */
+/* ==================== */
 h1 {
   margin-top: 0;
   color: var(--primary-solid);
@@ -186,7 +201,9 @@ h1::after {
   border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
-/* Formulários */
+/* ==================== */
+/* FORMULÁRIOS          */
+/* ==================== */
 .form-group {
   margin-bottom: 20px;
   display: flex;
@@ -677,4 +694,428 @@ textarea:focus {
 [data-atributo="mp"] .atributo-inputs,
 [data-atributo="mp"] .resultado {
   display: none;
+}
+/* Equipamentos - Estrutura Geral */
+#equipamentos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 24px;
+  background: var(--bg-item);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.equipamento-grupo {
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(145deg, #252535 0%, #2a2a3a 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.equipamento-grupo h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-light);
+}
+
+.equipamento-grupo small {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Slot de Equipamento */
+.slot-equipamento {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input-equipamento-nome,
+.input-equipamento-bonus {
+  flex: 1 1 200px;
+  min-width: 160px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background-color: var(--input-bg);
+  color: var(--text);
+}
+
+/* Botão de Adicionar Item (reutilizado) */
+.btn-add-maestria {
+  background: var(--primary);
+  color: white;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.btn-add-maestria::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-hover);
+  z-index: -1;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.btn-add-maestria:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+
+.btn-add-maestria:hover::before {
+  opacity: 1;
+}
+/* Alertas personalizados */
+.custom-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.custom-alert-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.custom-alert {
+  background-color: #1e1e2d;
+  border: 1px solid #393945;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+.custom-alert-overlay.show .custom-alert {
+  transform: translateY(0);
+}
+
+.custom-alert-title {
+  color: #ff6b6b;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.custom-alert-message {
+  color: #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.custom-alert-button {
+  background-color: #5755d9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+  transition: background-color 0.2s;
+}
+
+.custom-alert-button:hover {
+  background-color: #4a48c7;
+}
+.slot-equipamento[data-is-special="true"] {
+  border-left: 3px solid #5755d9;
+  background-color: rgba(87, 85, 217, 0.1);
+}
+/* Estilos para os slots */
+.slot-equipamento {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: #2a2a3a;
+  border-radius: 4px;
+}
+
+/* Inputs de equipamento */
+.input-equipamento-nome {
+  flex: 2;
+  min-width: 150px;
+  padding: 8px;
+  border: 1px solid #393945;
+  border-radius: 4px;
+  background-color: #1e1e2d;
+  color: #e0e0e0;
+}
+
+.input-equipamento-bonus {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #393945;
+  border-radius: 4px;
+  background-color: #1e1e2d;
+  color: #e0e0e0;
+}
+
+/* Itens de apoio */
+.item-apoio-wrapper {
+  background-color: #2a2a3a80;
+}
+
+.input-item-apoio-nome {
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #393945;
+  border-radius: 4px;
+  background-color: #1e1e2d;
+  color: #e0e0e0;
+}
+
+.input-item-apoio-descricao {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px;
+  border: 1px solid #393945;
+  border-radius: 4px;
+  background-color: #1e1e2d;
+  color: #e0e0e0;
+}
+
+/* Botões - mantendo suas classes originais */
+.remove-maestria {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+.btn-add-maestria {
+  /* Seus estilos existentes para essa classe */
+  background-color: #5755d9;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Item especial */
+[data-is-special="true"] {
+  border-left: 3px solid #5755d9;
+  background-color: rgba(87, 85, 217, 0.1);
+}
+
+/* Estilos para o inv personalizado */
+.custom-prompt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-prompt {
+  background: var(--bg-item);
+  padding: 25px;
+  border-radius: var(--radius-md);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.custom-prompt-title {
+  color: var(--primary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.custom-prompt-message {
+  color: var(--text);
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.custom-prompt-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+
+.custom-prompt-btn {
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  background: var(--primary);
+  color: white;
+}
+
+.custom-prompt-btn:hover {
+  background: var(--primary-hover);
+}
+
+.btn-no {
+  background: var(--bg-item);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-no:hover {
+  background: var(--bg-hover);
+}
+
+/* Botão de adicionar item */
+.btn-add-item {
+  background: var(--primary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--transition);
+  align-self: flex-start;
+  margin: 16px 0;
+}
+
+.btn-add-item:hover {
+  background: var(--primary-hover);
+}
+
+/* Estilo dos inputs de número - ATUALIZADO */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-item);
+  color: var(--text);
+  width: 60px; /* Largura fixa para melhor visualização */
+}
+
+/* Remove setas padrão dos inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Container das setas personalizadas */
+.number-input-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botões das setas roxas */
+.number-input-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.number-input-arrows button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  padding: 0;
+}
+
+.number-input-arrows button:hover {
+  background: var(--primary-hover);
+}
+
+/* Ícones SVG das setas */
+.number-input-arrows button.arrow-up::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M7 14l5-5 5 5z'/%3E%3C/svg%3E");
+}
+
+.number-input-arrows button.arrow-down::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='16px' height='16px'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+}
+
+/* Ícone de reverter estilizado */
+.btn-reverter {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: 8px;
+  transition: var(--transition);
+}
+
+.btn-reverter:hover {
+  color: var(--primary-hover);
+  transform: rotate(90deg);
+}
+
+/* Estilo invisível e limpo para o botão da lixeira */
+.btn-remover-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1.1rem;
+  color: var(--text);
+  opacity: 0.7;
+  transition: 0.3s ease;
+}
+
+.btn-remover-item:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
