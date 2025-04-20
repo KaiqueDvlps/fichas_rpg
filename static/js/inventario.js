@@ -4,30 +4,23 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnYes = document.getElementById("custom-prompt-yes");
   const btnNo = document.getElementById("custom-prompt-no");
 
-  // Variável para armazenar a resposta
-  let consumivelResponse = null;
-  let resolvePrompt = null;
-
   // Função para mostrar o prompt personalizado
   function showCustomPrompt() {
     return new Promise((resolve) => {
-      resolvePrompt = resolve;
       promptOverlay.style.display = "flex";
+
+      // Limpa a resposta anterior quando o modal é aberto novamente
+      btnYes.onclick = () => {
+        promptOverlay.style.display = "none";
+        resolve(true);
+      };
+
+      btnNo.onclick = () => {
+        promptOverlay.style.display = "none";
+        resolve(false);
+      };
     });
   }
-
-  // Event listeners para os botões
-  btnYes.addEventListener("click", () => {
-    consumivelResponse = true;
-    promptOverlay.style.display = "none";
-    if (resolvePrompt) resolvePrompt(true);
-  });
-
-  btnNo.addEventListener("click", () => {
-    consumivelResponse = false;
-    promptOverlay.style.display = "none";
-    if (resolvePrompt) resolvePrompt(false);
-  });
 
   // Adiciona evento ao botão de adicionar item
   document
@@ -39,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Controle do input de Wons
   const inputWons = document.getElementById("wons");
+  inputWons.value = 0; // Define valor inicial como 0
 
   window.incrementar = function () {
     inputWons.stepUp();
@@ -71,6 +65,10 @@ async function adicionarItem(isConsumivel) {
   nomeInput.placeholder = "Nome do item";
   nomeInput.classList.add("input-item-inventario");
 
+  // Container de ações (lixeira + seta)
+  const actionsDiv = document.createElement("div");
+  actionsDiv.classList.add("item-actions");
+
   if (isConsumivel) {
     const consumivelContainer = document.createElement("div");
     consumivelContainer.classList.add("consumivel-container");
@@ -97,10 +95,12 @@ async function adicionarItem(isConsumivel) {
     const totalUp = document.createElement("button");
     totalUp.classList.add("arrow-up");
     totalUp.type = "button";
+    totalUp.innerHTML = "↑";
 
     const totalDown = document.createElement("button");
     totalDown.classList.add("arrow-down");
     totalDown.type = "button";
+    totalDown.innerHTML = "↓";
 
     // Cria elementos para quantidade usada
     const usadoDiv = document.createElement("div");
@@ -114,7 +114,7 @@ async function adicionarItem(isConsumivel) {
 
     const usadoInput = document.createElement("input");
     usadoInput.type = "number";
-    usadoInput.value = "0";
+    usadoInput.value = "0"; // Valor inicial 0
     usadoInput.min = "0";
     usadoInput.classList.add("input-quantidade");
 
@@ -124,10 +124,12 @@ async function adicionarItem(isConsumivel) {
     const usadoUp = document.createElement("button");
     usadoUp.classList.add("arrow-up");
     usadoUp.type = "button";
+    usadoUp.innerHTML = "↑";
 
     const usadoDown = document.createElement("button");
     usadoDown.classList.add("arrow-down");
     usadoDown.type = "button";
+    usadoDown.innerHTML = "↓";
 
     // Contador e botão de reverter
     const contador = document.createElement("span");
@@ -140,14 +142,30 @@ async function adicionarItem(isConsumivel) {
     btnReverter.classList.add("btn-reverter");
     btnReverter.style.display = "none";
 
-    // Função para atualizar o contador
+    // Função para atualizar o contador com validação
     function atualizarContador() {
-      const total = parseInt(totalInput.value) || 1;
-      const usado = parseInt(usadoInput.value) || 0;
+      let total = parseInt(totalInput.value) || 1;
+      let usado = parseInt(usadoInput.value) || 0;
+
+      // Impede de usar mais do que tem
+      if (usado > total) {
+        usado = total;
+        usadoInput.value = total;
+      }
+
       contador.textContent = `${usado}/${total}`;
 
+      // Mostra botão de reverter quando usado = total
       if (usado >= total && total > 0) {
         btnReverter.style.display = "inline-block";
+
+        // ZERA TUDO (TOTAL E USADO) quando usado = total
+        setTimeout(() => {
+          totalInput.value = 0;
+          usadoInput.value = 0;
+          contador.textContent = "0/0";
+          btnReverter.style.display = "none";
+        }, 1000);
       } else {
         btnReverter.style.display = "none";
       }
@@ -162,14 +180,23 @@ async function adicionarItem(isConsumivel) {
     totalDown.addEventListener("click", () => {
       if (totalInput.value > 1) {
         totalInput.stepDown();
+        // Ajusta usado se necessário
+        if (parseInt(usadoInput.value) > parseInt(totalInput.value)) {
+          usadoInput.value = totalInput.value;
+        }
         atualizarContador();
       }
     });
 
     // Event listeners para os controles de usado
     usadoUp.addEventListener("click", () => {
-      usadoInput.stepUp();
-      atualizarContador();
+      const total = parseInt(totalInput.value) || 1;
+      const usado = parseInt(usadoInput.value) || 0;
+
+      if (usado < total) {
+        usadoInput.stepUp();
+        atualizarContador();
+      }
     });
 
     usadoDown.addEventListener("click", () => {
@@ -179,9 +206,18 @@ async function adicionarItem(isConsumivel) {
       }
     });
 
-    // Input listeners
-    totalInput.addEventListener("input", atualizarContador);
-    usadoInput.addEventListener("input", atualizarContador);
+    // Input listeners com validação
+    totalInput.addEventListener("input", () => {
+      if (totalInput.value < 1) totalInput.value = 1;
+      atualizarContador();
+    });
+
+    usadoInput.addEventListener("input", () => {
+      const total = parseInt(totalInput.value) || 1;
+      if (usadoInput.value < 0) usadoInput.value = 0;
+      if (usadoInput.value > total) usadoInput.value = total;
+      atualizarContador();
+    });
 
     // Monta a estrutura de total
     totalArrows.appendChild(totalUp);
@@ -207,11 +243,19 @@ async function adicionarItem(isConsumivel) {
       itemDiv.remove();
     });
 
+    // Botão de ação (seta)
+    const btnAction = document.createElement("button");
+    btnAction.innerHTML = "➔";
+    btnAction.classList.add("item-action-arrow");
+    btnAction.addEventListener("click", () => {
+      // Lógica para ações adicionais pode ser adicionada aqui
+      console.log("Ação adicional para o item");
+    });
+
     // Event listener para reverter
     btnReverter.addEventListener("click", () => {
-      usadoInput.value = totalInput.value;
+      usadoInput.value = 0;
       atualizarContador();
-      btnReverter.style.display = "none";
     });
 
     // Adiciona todos os elementos ao container
@@ -222,7 +266,11 @@ async function adicionarItem(isConsumivel) {
 
     itemDiv.appendChild(nomeInput);
     itemDiv.appendChild(consumivelContainer);
-    itemDiv.appendChild(btnRemover);
+
+    // Adiciona botões de ação
+    actionsDiv.appendChild(btnAction);
+    actionsDiv.appendChild(btnRemover);
+    itemDiv.appendChild(actionsDiv);
   } else {
     // Para itens não consumíveis
     const btnRemover = document.createElement("button");
@@ -232,8 +280,21 @@ async function adicionarItem(isConsumivel) {
       itemDiv.remove();
     });
 
+    // Botão de ação (seta)
+    const btnAction = document.createElement("button");
+    btnAction.innerHTML = "➔";
+    btnAction.classList.add("item-action-arrow");
+    btnAction.addEventListener("click", () => {
+      // Lógica para ações adicionais pode ser adicionada aqui
+      console.log("Ação adicional para o item");
+    });
+
     itemDiv.appendChild(nomeInput);
-    itemDiv.appendChild(btnRemover);
+
+    // Adiciona botões de ação
+    actionsDiv.appendChild(btnAction);
+    actionsDiv.appendChild(btnRemover);
+    itemDiv.appendChild(actionsDiv);
   }
 
   document.getElementById("lista-itens").appendChild(itemDiv);

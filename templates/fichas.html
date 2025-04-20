@@ -21,7 +21,7 @@
             <button class="tab-btn" onclick="showTab('atributos', event)">Atributos</button>
             <button class="tab-btn" onclick="showTab('equipamento-container', event)">Equipamento</button>
             <button class="tab-btn" onclick="showTab('inventario', event)">Inventario</button>
-            <button class="tab-btn" onclick="showTab('runas', event)">Runas</button>
+            <button class="tab-btn" onclick="showTab('confirmacao-atualizacao', event)">Confirmação</button>
         </div>
 
         <!-- CONTEÚDO -->
@@ -96,21 +96,19 @@
             <input type="text" name="duelo[]" placeholder="Duelo (Ex: 0/5)">
             <input type="text" name="boss[]" placeholder="Boss (Ex: 0/3)">
             <input type="text" name="nivel[]" placeholder="Nível (Ex: 1)">
-            <button type="button" class="remove-maestria" onclick="removerMaestria(this)">🗑️</button>
+            
         </div>
     </div>
-    <button type="button" class="btn-add-maestria">Adicionar Maestria</button>
+    <button type="button" id="add-maestria" class="btn-add-maestria">Adicionar Maestria</button>
 </div>
 
 <!-- ABA 6 -->
 <div id="lutador" class="tab">
     <h2>Tipo de Lutador</h2>
     <div id="lutadores-container">
-        <!-- Campos vão ser inseridos aqui -->
+        <!-- Campos aparecerão aqui após clique -->
     </div>
-    <button type="button" onclick="adicionarTipoLutador()" class="btn-adicionar">
-        ➕ Adicionar Tipo
-    </button>
+    <button type="button" id="btn-adicionar-lutador" class="btn-add-tlutador">Tipo Lutador</button>
 </div>
 
 <!-- ABA 7 - TÍTULOS -->
@@ -119,7 +117,7 @@
     <div id="titulos-container">
         <!-- Títulos adicionados vão aparecer aqui -->
     </div>
-    <button type="button" class="btn-add-maestria" onclick="adicionarTitulo()">
+    <button type="button" class="btn-add-titulo" onclick="adicionarTitulo()">
         <i>+</i> Adicionar Título
     </button>
 </div>
@@ -130,7 +128,7 @@
     <div id="passivas-container">
         <!-- Passivas adicionadas vão aparecer aqui -->
     </div>
-    <button type="button" class="btn-add-maestria" onclick="adicionarPassiva()">
+    <button type="button" class="btn-add-passiva" onclick="adicionarPassiva()">
         <i>+</i> Adicionar Passiva
     </button>
 </div>
@@ -141,7 +139,7 @@
     <div id="habilidades-container">
         <!-- Habilidades adicionadas vão aparecer aqui -->
     </div>
-    <button type="button" class="btn-add-maestria" onclick="adicionarHabilidade()">
+    <button type="button" class="btn-add-hab" onclick="adicionarHabilidade()">
         <i>+</i> Adicionar Habilidade
     </button>
 </div>
@@ -180,7 +178,7 @@
     </div>
     {% endfor %}
 </div>
-                    <! Aba 11 Equipamento>
+                    <!--Aba 11 Equipamento-->
 <div id="equipamento-container" class="tab">
   <h2>Equipamentos</h2>
 
@@ -212,7 +210,7 @@
     <div id="container-acessorios">
       <!-- Acessórios serão adicionados aqui -->
     </div>
-    <button id="btn-add-acessorio" class="btn-add-maestria">Adicionar Acessório</button>
+    <button id="btn-add-acessorio" class="btn-add-acessorio-apoio">Adicionar Acessório</button>
   </div>
 
   <!-- Itens de Apoio -->
@@ -221,7 +219,7 @@
     <div id="container-itemapoio">
       <!-- Itens de apoio serão adicionados aqui -->
     </div>
-    <button id="btn-add-itemapoio" class="btn-add-maestria">Adicionar Item de Apoio</button>
+    <button id="btn-add-itemapoio" class="btn-add-acessorio-apoio">Adicionar Item de Apoio</button>
   </div>
 
   <!-- Pernas -->
@@ -268,13 +266,13 @@
     </div>
   </div>
 </div>
-            <! aba 12 Inventario>
+            <!--aba 12 Inventario-->
 <div id="inventario" class="tab">
   <div class="inventario-container">
     <h3>💰 Wons:</h3>
     <input type="number" id="wons" placeholder="Digite a quantidade de Wons" min="0" class="input-wons"/>
 
-    <button class="btn-add-item" class="btn-add-maestria">Adcionar Item</button>
+    <button class="btn-add-item">Adcionar Item</button>
 
     <div id="lista-itens" class="lista-itens">
       <!-- Itens adicionados aparecerão aqui -->
@@ -313,6 +311,18 @@
     </div>
 </div>
 
+<div class="confirmacao-atualizacao">
+  <h3>Confirmar Atualização</h3>
+  <label>Motivo:</label>
+  <input type="text" id="motivo-edicao" placeholder="Descreva o motivo da mudança" />
+
+  <label>Senha:</label>
+  <input type="password" id="senha-confirmacao" placeholder="Digite sua senha" />
+
+  <button id="btn-salvar-ficha" class="btn-confirmar-edicao">Salvar Ficha</button>
+</div>
+
+
 
             <!SOMENTE JS>
     <script src="/static/js/maestria.js"></script>
@@ -323,5 +333,7 @@
     <script src="/static/js/atributos.js"></script>
     <script src="/static/js/equipamentos.js"></script>
     <script src="/static/js/inventario.js"></script>
+    <script src="/static/js/salvarFichas.js"></script>
+
 </body>
 </html>

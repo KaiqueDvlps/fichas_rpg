@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from datetime import datetime, timedelta
 from models import db, Usuario, Ficha, LogEdicao
+from werkzeug.security import check_password_hash
+from flask_login import current_user, login_required
 
 app = Flask(__name__)
 app.secret_key = 'Teste'
@@ -12,7 +14,7 @@ db.init_app(app)
 # ROTA DE LOGIN (GET)
 @app.route('/login')
 def login():
-    tipo_usuario = request.args.get('tipo', 'player')  # Default para player
+    tipo_usuario = request.args.get('tipo', 'player')
     return render_template('login.html', tipo_usuario=tipo_usuario)
 
 # ROTA DE LOGIN (POST)
@@ -100,7 +102,6 @@ def editar_ficha(usuario_id):
     ficha = Ficha.query.filter_by(usuario_id=usuario_id).first()
     usuario = Usuario.query.get(usuario_id)
 
-    # Verifica se pode trocar de lado
     pode_mudar_lado = True
     if ficha and ficha.lado_ultima_mudanca:
         tempo_passado = datetime.utcnow() - ficha.lado_ultima_mudanca
@@ -112,7 +113,7 @@ def editar_ficha(usuario_id):
             return "Senha incorreta!", 403
 
         if not ficha:
-            ficha = Ficha(  # outros campos já incluídos...
+            ficha = Ficha(
                 usuario_id=usuario_id,
                 nome_personagem=request.form['nome_personagem'],
                 raca=request.form['raca'],
@@ -124,19 +125,16 @@ def editar_ficha(usuario_id):
             )
             db.session.add(ficha)
         else:
-            # atualiza dados da ficha
             ficha.classe = request.form['classe']
             ficha.nivel = int(request.form['nivel'])
             ficha.descricao = request.form.get('descricao', '')
             ficha.ultima_edicao = datetime.utcnow()
 
-            # só troca o lado se permitido
             novo_lado = request.form.get('lado')
             if pode_mudar_lado and novo_lado != ficha.lado:
                 ficha.lado = novo_lado
                 ficha.lado_ultima_mudanca = datetime.utcnow()
 
-        # Log da edição
         log = LogEdicao(
             ficha_id=ficha.id if ficha.id else None,
             usuario_id=usuario_id,
@@ -149,10 +147,10 @@ def editar_ficha(usuario_id):
 
     logs = LogEdicao.query.filter_by(ficha_id=ficha.id).all() if ficha else []
     return render_template('fichas.html',
-                           ficha=ficha,
-                           logs=logs,
-                           usuario=usuario,
-                           pode_mudar_lado=pode_mudar_lado)
+                         ficha=ficha,
+                         logs=logs,
+                         usuario=usuario,
+                         pode_mudar_lado=pode_mudar_lado)
 
 # EDITAR FICHA (VARIANTE TESTE)
 @app.route('/ficha/<int:usuario_id>/editar_2', methods=['GET', 'POST'])
@@ -210,6 +208,42 @@ def find_user(nome):
     if usuario:
         return f"Usuário '{nome}' encontrado! ID: {usuario.id}"
     return "Usuário não encontrado", 404
+
+# =============================================
+# NOVA ROTA ADICIONADA (EXCLUSIVAMENTE O QUE VOCÊ PEDIU)
+# =============================================
+@app.route('/salvar_ficha', methods=['POST'])
+@login_required
+def salvar_ficha():
+    dados = request.get_json()
+    
+    if not dados:
+        return jsonify({'error': 'Dados inválidos'}), 400
+
+    if not check_password_hash(current_user.senha, dados.get('senha')):
+        return jsonify({'error': 'Senha incorreta'}), 401
+
+    ficha = Ficha.query.filter_by(usuario_id=current_user.id).first()
+    if not ficha:
+        return jsonify({'error': 'Ficha não encontrada'}), 404
+
+    campos_permitidos = ['classe', 'classe_avancada', 'nivel', 'experiencia', 'rank', 'lado', 'wons']
+    for campo in campos_permitidos:
+        if campo in dados:
+            setattr(ficha, campo, dados[campo])
+
+    ficha.ultima_edicao = datetime.utcnow()
+
+    log = LogEdicao(
+        ficha_id=ficha.id,
+        usuario_id=current_user.id,
+        motivo=dados.get('motivo', 'Atualização via API'),
+        data=datetime.utcnow()
+    )
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({'success': 'Ficha atualizada com sucesso!'}), 200
 
 # RODAR A APLICAÇÃO
 if __name__ == '__main__':
