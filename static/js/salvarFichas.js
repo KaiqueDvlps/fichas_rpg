@@ -1,58 +1,79 @@
 document
   .getElementById("btn-salvar-ficha")
   .addEventListener("click", async () => {
-    const motivo = document.getElementById("motivo-edicao").value;
-    const senha = document.getElementById("senha-confirmacao").value;
+    console.log("Botão clicado!");
+
+    const motivoElem = document.getElementById("motivo-edicao");
+    const senhaElem = document.getElementById("senha-confirmacao");
+
+    if (!motivoElem || !senhaElem) {
+      console.error("Os campos motivo ou senha não foram encontrados no DOM!");
+      alert("Os campos motivo ou senha não estão presentes.");
+      return;
+    }
+
+    const motivo = motivoElem.value;
+    const senha = senhaElem.value;
 
     if (!motivo || !senha) {
+      console.log("Motivo ou senha não preenchidos!");
       alert("Preencha o motivo e a senha.");
       return;
     }
 
-    // Exemplo de dados que você precisa capturar:
     const fichaData = {
       motivo: motivo,
       senha: senha,
-      classe: document.querySelector('input[name="classe"]').value,
-      classe_avancada: document.querySelector('input[name="classe_avancada"]')
-        .value,
-      nivel: document.querySelector('input[name="nivel"]').value,
-      experiencia: document.querySelector('input[name="nivel-input"]').value,
-      rank: document.querySelector('select[name="rank-select"]').value,
-      lado: document.querySelector('select[name="lado"]').value,
-      wons: document.querySelector("#wons").value,
-      // Você pode continuar com outros campos dinâmicos abaixo
-      maestrias: [],
-      titulos: [],
-      passivas: [],
-      habilidades: [],
-      equipamentos: [],
-      atributos: {},
+      classe: document.querySelector('input[name="classe"]')?.value || "",
+      classe_avancada:
+        document.querySelector('input[name="classe_avancada"]')?.value || "",
+      nivel: document.querySelector('input[name="nivel"]')?.value || "",
+      experiencia:
+        document.querySelector('input[name="experiencia"]')?.value || "",
+      rank: document.querySelector('select[name="rank-select"]')?.value || "",
+      lado: document.querySelector('select[name="lado"]')?.value || "",
+
+      maestrias: Array.from(
+        document.querySelectorAll("#maestrias-container .maestria-item")
+      ).map((item) => ({
+        nome: item.querySelector('[name="nome_maestria[]"]')?.value || "",
+        treino: item.querySelector('[name="treino[]"]')?.value || "",
+        duelo: item.querySelector('[name="duelo[]"]')?.value || "",
+        boss: item.querySelector('[name="boss[]"]')?.value || "",
+        nivel: item.querySelector('[name="nivel[]"]')?.value || "",
+      })),
+
+      tipos_lutador: Array.from(
+        document.querySelectorAll("#lutadores-container .tipo-lutador")
+      ).map((item) => ({
+        tipo: item.querySelector('input[name="tipo_lutador[]"]')?.value || "",
+      })),
+
+      equipamentos: {
+        cabeca: {
+          nome:
+            document.querySelector(
+              ".equipamento-grupo:nth-child(1) .input-equipamento-nome"
+            )?.value || "",
+          bonus:
+            document.querySelector(
+              ".equipamento-grupo:nth-child(1) .input-equipamento-bonus"
+            )?.value || "",
+        },
+        corpo: Array.from(
+          document.querySelectorAll(
+            ".equipamento-grupo:nth-child(2) .slot-equipamento"
+          )
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        // Adicione outros grupos de equipamentos aqui se necessário
+      },
     };
 
-    // Pegando maestrias
-    document
-      .querySelectorAll("#maestrias-container .maestria-item")
-      .forEach((item) => {
-        fichaData.maestrias.push({
-          nome: item.querySelector('[name="nome_maestria[]"]').value,
-          treino: item.querySelector('[name="treino[]"]').value,
-          duelo: item.querySelector('[name="duelo[]"]').value,
-          boss: item.querySelector('[name="boss[]"]').value,
-          nivel: item.querySelector('[name="nivel[]"]').value,
-        });
-      });
+    console.log("Dados da ficha:", fichaData);
 
-    // Pegando atributos
-    document.querySelectorAll(".atributo-box").forEach((box) => {
-      const nome = box.getAttribute("data-atributo");
-      const base = box.querySelector(".base-input")?.value || 0;
-      fichaData.atributos[nome] = { base: base };
-    });
-
-    // (Repita para lutador, titulos, passivas, habilidades, equipamentos e inventário)
-
-    // Envio via fetch
     try {
       const resposta = await fetch("/salvar_ficha", {
         method: "POST",
@@ -62,14 +83,37 @@ document
         body: JSON.stringify(fichaData),
       });
 
-      const result = await resposta.json();
-      if (resposta.ok) {
-        alert("Ficha salva com sucesso!");
-        window.location.reload();
+      const resultado = await resposta.json();
+
+      if (resultado.success) {
+        alert(resultado.message);
+        // Se quiser redirecionar manualmente
+        window.location.href = `/ficha/${fichaData.usuario_id}`;
       } else {
-        alert("Erro ao salvar: " + result.mensagem);
+        alert("Erro ao salvar ficha!");
       }
     } catch (err) {
-      alert("Erro de conexão: " + err);
+      console.error("Erro de Conexão:", err);
+      showCustomAlert(
+        "Erro de Conexão",
+        "Não foi possível conectar ao servidor: " + err,
+        "error"
+      );
     }
   });
+
+// Função para mostrar alertas personalizados
+function showCustomAlert(title, message, type) {
+  const alertBox = document.createElement("div");
+  alertBox.className = `custom-alert ${type}`;
+  alertBox.innerHTML = `
+    <h3>${title}</h3>
+    <p>${message}</p>
+    <button onclick="this.parentElement.remove()">OK</button>
+  `;
+  document.body.appendChild(alertBox);
+
+  setTimeout(() => {
+    alertBox.remove();
+  }, 5000);
+}
