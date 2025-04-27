@@ -41,32 +41,32 @@
             <div id="classe" class="tab">
                 <h2>Classe</h2>
                 <label>Classe:</label>
-                <input type="text" name="classe" />
+                <input type="text" name="classe" value="{{ficha.classe}}"/>
                 <label>Classe Avançada:</label>
-                <input type="text" name="classe_avancada" />
+                <input type="text" name="classe_avancada" value="{{ficha.classe_avancada}}"/>
             </div>
 
             <!-- ABA 3 - NÍVEL E RANK (SIMPLIFICADA) -->
-            <div id="nivel" class="tab">    
-                <h2>Nível e Rank</h2>
-                
-                <label for="nivel">Nível:</label>
-                <input type="number" id="nivel" name="nivel" min="1" max="150" />
-                
-                <label for="experiencia">Experiência:</label>
-                <input type="number" id="nivel-input" name="experiencia" min="1" max="150" placeholder="Ex: 500/5000" />
-                
-                <label for="rank-select">Selecione seu Rank:</label>
-                <select id="rank-select" name="rank-select">
-                    <option value="">Selecione</option>
-                    <option value="E">Rank E</option>
-                    <option value="D">Rank D</option>
-                    <option value="C">Rank C</option>
-                    <option value="B">Rank B</option>
-                    <option value="A">Rank A</option>
-                    <option value="S">Rank S</option>
-                </select>
-            </div>
+<div id="nivel" class="tab">    
+    <h2>Nível e Rank</h2>
+    
+    <label for="nivel">Nível:</label>
+    <input type="number" id="nivel" name="nivel" min="1" max="150" value="{{ficha.nivel}}"/>
+
+    <label for="experiencia">Experiência:</label>
+    <input type="number" id="nivel-input" name="experiencia" min="1" max="150" placeholder="Ex: 500/5000" value="{{ficha.experiencia}}" />
+    
+    <label for="rank-select">Selecione seu Rank:</label>
+    <select id="rank-select" name="rank">
+        <option value="">Selecione</option>
+        <option value="E" {% if ficha.rank == 'E' %}selected{% endif %}>Rank E</option>
+        <option value="D" {% if ficha.rank == 'D' %}selected{% endif %}>Rank D</option>
+        <option value="C" {% if ficha.rank == 'C' %}selected{% endif %}>Rank C</option>
+        <option value="B" {% if ficha.rank == 'B' %}selected{% endif %}>Rank B</option>
+        <option value="A" {% if ficha.rank == 'A' %}selected{% endif %}>Rank A</option>
+        <option value="S" {% if ficha.rank == 'S' %}selected{% endif %}>Rank S</option>
+    </select>
+</div>
 
             <!-- ABA 4 -->
             <div id="lado" class="tab">
@@ -77,6 +77,7 @@
                     <option value="igualitario" {% if ficha.lado == 'igualitario' %}selected{% endif %}>Igualitário</option>
                     <option value="guilda" {% if ficha.lado == 'guilda' %}selected{% endif %}>Guilda</option>
                     <option value="associacao" {% if ficha.lado == 'associacao' %}selected{% endif %}>Associação</option>
+                    value="{{ficha.lado}}
                 </select>
                 {% if ficha %}
                     <p>Última mudança: {{ ficha.lado_ultima_mudanca.strftime('%d/%m/%Y %H:%M') }}</p>
@@ -90,26 +91,34 @@
 <div id="maestria" class="tab">
     <h2>Maestrias</h2>
     <div id="maestrias-container">
+        {% for maestria in ficha.maestria %}
         <div class="maestria-item">
-            <input type="text" name="nome_maestria[]" placeholder="Nome da Maestria">
-            <input type="text" name="treino[]" placeholder="Treino (Ex: 0/20)">
-            <input type="text" name="duelo[]" placeholder="Duelo (Ex: 0/5)">
-            <input type="text" name="boss[]" placeholder="Boss (Ex: 0/3)">
-            <input type="text" name="nivel[]" placeholder="Nível (Ex: 1)">
-            
+            <input type="text" name="nome_maestria[]" placeholder="Nome da Maestria" value="{{ maestria.nome }}">
+            <input type="text" name="treino[]" placeholder="Treino (Ex: 0/20)" value="{{ maestria.treino }}">
+            <input type="text" name="duelo[]" placeholder="Duelo (Ex: 0/5)" value="{{ maestria.duelo }}">
+            <input type="text" name="boss[]" placeholder="Boss (Ex: 0/3)" value="{{ maestria.boss }}">
+            <input type="text" name="nivel[]" placeholder="Nível (Ex: 1)" value="{{ maestria.nivel }}">
         </div>
+        {% endfor %}
     </div>
     <button type="button" id="add-maestria" class="btn-add-maestria">Adicionar Maestria</button>
 </div>
+
 
 <!-- ABA 6 -->
 <div id="lutador" class="tab">
     <h2>Tipo de Lutador</h2>
     <div id="lutadores-container">
         <!-- Campos aparecerão aqui após clique -->
+        {% for lutador in ficha.lutadores %}
+        <div class="lutador-item">
+            <input type="text" name="tipo_lutador[]" placeholder="Tipo do Lutador" value="{{tipo_lutador}}">
+        </div>
+        {% endfor %}
     </div>
-    <button type="button" id="btn-adicionar-lutador" class="btn-add-tlutador">Tipo Lutador</button>
+    <button type="button" id="btn-adicionar-lutador" class="btn-add-tlutador">Adicionar Tipo Lutador</button>
 </div>
+
 
 <!-- ABA 7 - TÍTULOS -->
 <div id="titulos" class="tab">

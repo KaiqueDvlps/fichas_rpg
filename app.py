@@ -113,7 +113,7 @@ def fichas(usuario_id):
 
     usuario_resp = supabase.table('usuario').select('*').eq('id', usuario_id).execute()
     usuario = usuario_resp.data[0] if usuario_resp.data else None
-
+    print(ficha, usuario);
     # Verificação de mudança de lado
     pode_mudar_lado = True
     if ficha and ficha.get('lado_ultima_mudanca'):
@@ -356,42 +356,46 @@ def fichas(usuario_id):
         itens_apoio=itens_apoio,
         inventario=inventario
     )
+def atualizar(table_name, campos_permitidos, dados, ficha_id, campos_permitidos_maestria, campos_permitidos_equipamentos, campos_permitidos_atributos, campos_permitidos_inventario):
+    update_data = {
+        campo: dados[campo]
+        for campo in campos_permitidos
+        if campo in dados and dados[campo] != ""
+    }
+    update_data['ultima_edicao'] = datetime.utcnow().isoformat()
+    supabase.table(table_name).update(update_data).eq('id', ficha_id).execute()
 
 # ✅ ROTA CORRIGIDA
 @app.route('/salvar_ficha', methods=['POST'])
 @login_required
 def salvar_ficha():
     dados = request.get_json()
-
     if 'senha' not in dados or dados['senha'] != current_user.senha:
         flash('Senha incorreta!', 'danger')
         return redirect(url_for('fichas', usuario_id=current_user.id))
-
-    resposta = supabase.table('ficha').select('*').eq('id', current_user.id).execute()
+    
+    resposta = supabase.table('ficha').select('*').eq('usuario_id', current_user.id).execute()
     ficha = resposta.data[0] if resposta.data else None
     if not ficha:
+        print(resposta, ficha, current_user.id)
         flash('Ficha não encontrada!', 'danger')
         return jsonify({'success': False, 'message': 'erro ao atualizar ficha!'})
-
-    campos_permitidos = ['classe', 'classe_avancada', 'nivel', 'experiencia', 'rank', 'lado', 'wons']
-    update_data = {
-    campo: dados[campo]
-    for campo in campos_permitidos
-    if campo in dados and dados[campo] != ""}
-    update_data['ultima_edicao'] = datetime.utcnow().isoformat()
-    print(resposta,ficha)
-    supabase.table('ficha').update(update_data).eq('id', ficha['id']).execute()
-
-    log_data = {
-        'ficha_id': ficha['id'],
-        'usuario_id': current_user.id,
-        'motivo': dados.get('motivo', 'Atualização via formulário'),
-        'data': datetime.utcnow().isoformat()
-    }
+    
+    campos_permitidos_ficha = ['classe', 'classe_avancada', 'nivel', 'experiencia', 'rank', 'lado', 'wons', 'habilidades', 'passivas', 'tipos_lutador', 'titulos']
+    campos_permitidos_maestria = ['nome', 'treino', 'duelo', 'boss', 'nivel']
+    campos_permitidos_equipamentos = {"cabeca":["nome","bonus"],"corpo":["nome","bonus"],"acessorios":["nome","bonus"],"apoio":["nome","descricao"],"pernas":["nome","bonus"],"pes":["nome","bonus"],"maos":["nome","bonus"],"armas":["nome","bonus"]}
+    campos_permitidos_atributos = {"forca":["valor_base","bonus"],"agilidade":["valor_base","bonus"],"resistencia":["valor_base","bonus"],"sentidos":["valor_base","bonus"],"inteligencia":["valor_base","bonus"]}
+    campos_permitidos_inventario = {"wons":["valor"],"itens":[{"nome":["nome"],"consumivel":["bool"],"total":["valor"],"usados":["valor"]}]}
+    
+    # CORRIGIDO: Passando ficha['id'] em vez de ficha e removendo ["id"]
+    atualizar("ficha", campos_permitidos_ficha, dados, ficha['id'], campos_permitidos_maestria, campos_permitidos_equipamentos, campos_permitidos_atributos, campos_permitidos_inventario)
+    
+    log_data = {'ficha_id': ficha['id'], 'usuario_id': current_user.id, 'motivo': dados.get('motivo', 'Atualização via formulário'), 'data': datetime.utcnow().isoformat()}
     supabase.table('log_edicao').insert(log_data).execute()
-
+    
     flash('Ficha atualizada com sucesso!', 'success')
     return jsonify({'success': True, 'message': 'Ficha atualizada com sucesso!'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

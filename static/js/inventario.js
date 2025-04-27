@@ -85,7 +85,7 @@ async function adicionarItem(isConsumivel) {
 
     const totalInput = document.createElement("input");
     totalInput.type = "number";
-    totalInput.value = "1";
+    totalInput.value = "0";
     totalInput.min = "1";
     totalInput.classList.add("input-quantidade");
 
