@@ -1,50 +1,56 @@
-{% extends "base.html" %} {% block content %}
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-          <h4 class="mb-0">
-            {% if tipo_usuario == 'admin' %} 🛡️ Acesso Administrativo {% else %}
-            👤 Acesso do Jogador {% endif %}
-          </h4>
-        </div>
-        <div class="card-body">
-          <form method="POST" action="{{ url_for('login') }}">
-            <input
-              type="hidden"
-              name="tipo_usuario"
-              value="{{ tipo_usuario }}"
-            />
-
-            <div class="mb-3">
-              <label class="form-label">Usuário</label>
-              <input
-                type="text"
-                name="username"
-                class="form-control"
-                required
-              />
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema RPG - Login</title>
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="/static/css/login.css">
+</head>
+<body>
+    <!-- Container Principal -->
+    <div class="login-container">
+        <!-- Card de Login -->
+        <div class="login-card">
+            <!-- Cabeçalho -->
+            <div class="login-header">
+                <h2>
+                    {% if tipo_usuario == 'admin' %} 
+                        🛡️ Acesso Administrativo 
+                    {% else %} 
+                        👤 Acesso do Jogador 
+                    {% endif %}
+                </h2>
             </div>
 
-            <div class="mb-3">
-              <label class="form-label">Senha</label>
-              <input
-                type="password"
-                name="senha"
-                class="form-control"
-                required
-              />
-            </div>
+            <!-- Formulário -->
+            <form method="POST" action="{{ url_for('login') }}" class="login-form">
+                <input type="hidden" name="tipo_usuario" value="{{ tipo_usuario }}">
 
-            <button type="submit" class="btn btn-primary w-100">
-              {% if tipo_usuario == 'admin' %} Acessar Painel ADM {% else %}
-              Acessar Minha Ficha {% endif %}
-            </button>
-          </form>
+                <!-- Inputs -->
+                <div class="input-group">
+                    <label>Usuário</label>
+                    <input type="text" name="username" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" name="senha" required>
+                </div>
+
+                <!-- Botão -->
+                <button type="submit" class="login-btn">
+                    {% if tipo_usuario == 'admin' %} 
+                        Acessar Painel ADM 
+                    {% else %} 
+                        Acessar Minha Ficha 
+                    {% endif %}
+                </button>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
-</div>
-{% endblock %}
+
+    <!-- JavaScript Personalizado -->
+    <script src="/static/js/login.js""></script>
+</body>
+</html>
