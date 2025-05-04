@@ -130,6 +130,7 @@ def fichas(usuario_id):
     # Dados das novas tabelas
     maestrias = fetch_table_data('maestrias')
     tipos_lutador = fetch_table_data('tipos_lutador')
+    print(tipos_lutador)
     titulos = fetch_table_data('titulos')
     passivas = fetch_table_data('passivas')
     habilidades = fetch_table_data('habilidades')
@@ -356,7 +357,9 @@ def fichas(usuario_id):
         itens_apoio=itens_apoio,
         inventario=inventario
     )
-def atualizar(table_name, campos_permitidos, dados, ficha_id, campos_permitidos_maestria, campos_permitidos_equipamentos, campos_permitidos_atributos, campos_permitidos_inventario):
+
+
+def atualizar(table_name, campos_permitidos, dados, ficha_id):
     update_data = {
         campo: dados[campo]
         for campo in campos_permitidos
@@ -365,37 +368,129 @@ def atualizar(table_name, campos_permitidos, dados, ficha_id, campos_permitidos_
     update_data['ultima_edicao'] = datetime.utcnow().isoformat()
     supabase.table(table_name).update(update_data).eq('id', ficha_id).execute()
 
-# ✅ ROTA CORRIGIDA
 @app.route('/salvar_ficha', methods=['POST'])
 @login_required
 def salvar_ficha():
     dados = request.get_json()
+    print(dados)
     if 'senha' not in dados or dados['senha'] != current_user.senha:
         flash('Senha incorreta!', 'danger')
         return redirect(url_for('fichas', usuario_id=current_user.id))
-    
+
     resposta = supabase.table('ficha').select('*').eq('usuario_id', current_user.id).execute()
     ficha = resposta.data[0] if resposta.data else None
     if not ficha:
-        print(resposta, ficha, current_user.id)
         flash('Ficha não encontrada!', 'danger')
-        return jsonify({'success': False, 'message': 'erro ao atualizar ficha!'})
-    
-    campos_permitidos_ficha = ['classe', 'classe_avancada', 'nivel', 'experiencia', 'rank', 'lado', 'wons', 'habilidades', 'passivas', 'tipos_lutador', 'titulos']
-    campos_permitidos_maestria = ['nome', 'treino', 'duelo', 'boss', 'nivel']
-    campos_permitidos_equipamentos = {"cabeca":["nome","bonus"],"corpo":["nome","bonus"],"acessorios":["nome","bonus"],"apoio":["nome","descricao"],"pernas":["nome","bonus"],"pes":["nome","bonus"],"maos":["nome","bonus"],"armas":["nome","bonus"]}
-    campos_permitidos_atributos = {"forca":["valor_base","bonus"],"agilidade":["valor_base","bonus"],"resistencia":["valor_base","bonus"],"sentidos":["valor_base","bonus"],"inteligencia":["valor_base","bonus"]}
-    campos_permitidos_inventario = {"wons":["valor"],"itens":[{"nome":["nome"],"consumivel":["bool"],"total":["valor"],"usados":["valor"]}]}
-    
-    # CORRIGIDO: Passando ficha['id'] em vez de ficha e removendo ["id"]
-    atualizar("ficha", campos_permitidos_ficha, dados, ficha['id'], campos_permitidos_maestria, campos_permitidos_equipamentos, campos_permitidos_atributos, campos_permitidos_inventario)
-    
-    log_data = {'ficha_id': ficha['id'], 'usuario_id': current_user.id, 'motivo': dados.get('motivo', 'Atualização via formulário'), 'data': datetime.utcnow().isoformat()}
+        return jsonify({'success': False, 'message': 'Erro ao atualizar ficha!'})
+
+    # Atualiza tabela ficha
+    campos_permitidos_ficha = ['classe', 'classe_avancada', 'nivel', 'experiencia', 'rank', 'lado']
+    atualizar("ficha", campos_permitidos_ficha, dados, ficha['id'])
+
+    usuario_id = current_user.id
+
+    # Substitui habilidades
+    supabase.table('habilidades').delete().eq('usuario_id', usuario_id).execute()
+    if dados.get('habilidades'):
+        habilidades = [{'usuario_id': usuario_id, 'nome': h} for h in dados['habilidades']]
+        supabase.table('habilidades').insert(habilidades).execute()
+
+    # Substitui maestrias
+    supabase.table('maestrias').delete().eq('usuario_id', usuario_id).execute()
+    if dados.get('maestrias'):
+        for m in dados['maestrias']:
+            m['usuario_id'] = usuario_id
+        supabase.table('maestrias').insert(dados['maestrias']).execute()
+
+    # Substitui passivas
+    supabase.table('passivas').delete().eq('usuario_id', usuario_id).execute()
+    if dados.get('passivas'):
+        passivas = [{'usuario_id': usuario_id, 'descricao': p} for p in dados['passivas']]
+        supabase.table('passivas').insert(passivas).execute()
+
+    # Substitui tipos de lutador
+    supabase.table('tipos_lutador').delete().eq('usuario_id', usuario_id).execute()
+    if dados.get('tipos_lutador'):
+        tipos = [{'usuario_id': usuario_id, 'tipo': t} for t in dados['tipos_lutador']]
+        supabase.table('tipos_lutador').insert(tipos).execute()
+
+    # Substitui títulos
+    supabase.table('titulos').delete().eq('usuario_id', usuario_id).execute()
+    if dados.get('titulos'):
+        titulos = [{'usuario_id': usuario_id, **t} for t in dados['titulos']]
+        supabase.table('titulos').insert(titulos).execute()
+
+    # Substitui equipamentos
+    equipamentos = dados.get("equipamentos", {})
+    equip_data = {
+        'usuario_id': usuario_id,
+        'cabeca_nome': equipamentos.get('cabeca', {}).get('nome'),
+        'cabeca_bonus': equipamentos.get('cabeca', {}).get('bonus'),
+        'corpo_1_nome': equipamentos.get('corpo', [{}])[0].get('nome'),
+        'corpo_1_bonus': equipamentos.get('corpo', [{}])[0].get('bonus'),
+        'corpo_2_nome': equipamentos.get('corpo', [{}])[1].get('nome') if len(equipamentos.get('corpo', [])) > 1 else None,
+        'corpo_2_bonus': equipamentos.get('corpo', [{}])[1].get('bonus') if len(equipamentos.get('corpo', [])) > 1 else None,
+        'pernas_1_nome': equipamentos.get('pernas', [{}])[0].get('nome'),
+        'pernas_1_bonus': equipamentos.get('pernas', [{}])[0].get('bonus'),
+        'pernas_2_nome': equipamentos.get('pernas', [{}])[1].get('nome') if len(equipamentos.get('pernas', [])) > 1 else None,
+        'pernas_2_bonus': equipamentos.get('pernas', [{}])[1].get('bonus') if len(equipamentos.get('pernas', [])) > 1 else None,
+        'pes_nome': equipamentos.get('pes', [{}])[0].get('nome'),
+        'pes_bonus': equipamentos.get('pes', [{}])[0].get('bonus'),
+        'maos_nome': equipamentos.get('maos', [{}])[0].get('nome'),
+        'maos_bonus': equipamentos.get('maos', [{}])[0].get('bonus'),
+        'arma_1_nome': equipamentos.get('armas', [{}])[0].get('nome'),
+        'arma_1_bonus': equipamentos.get('armas', [{}])[0].get('bonus'),
+        'arma_2_nome': equipamentos.get('armas', [{}])[1].get('nome') if len(equipamentos.get('armas', [])) > 1 else None,
+        'arma_2_bonus': equipamentos.get('armas', [{}])[1].get('bonus') if len(equipamentos.get('armas', [])) > 1 else None,
+    }
+    supabase.table("equipamentos").delete().eq("usuario_id", usuario_id).execute()
+    supabase.table("equipamentos").insert(equip_data).execute()
+
+    # Substitui itens de apoio
+    supabase.table("itens_apoio").delete().eq("usuario_id", usuario_id).execute()
+    for item in equipamentos.get("apoio", []):
+        print(equipamentos.get("apoio"))
+        supabase.table("itens_apoio").insert({**item, "usuario_id": usuario_id}).execute()
+
+    # Substitui acessórios
+    supabase.table("acessorios").delete().eq("usuario_id", usuario_id).execute()
+    for item in equipamentos.get("acessorios", []):
+        supabase.table("acessorios").insert({**item, "usuario_id": usuario_id}).execute()
+
+    # Substitui inventário
+    supabase.table("inventario").delete().eq("usuario_id", usuario_id).execute()
+    for item in dados.get("inventario", {}).get("itens", []):
+        supabase.table("inventario").insert({
+            "usuario_id": usuario_id,
+            "nome": item.get("nome", ""),
+            "quantidade_total": int(item.get("total", 0)),
+            "quantidade_usada": int(item.get("usados", 0))
+        }).execute()
+
+    # Atualiza atributos
+    atributos = {att['nome']: att for att in dados.get("atributos", [])}
+    supabase.table("atributos").delete().eq("usuario_id", usuario_id).execute()
+    supabase.table("atributos").insert({
+        "usuario_id": usuario_id,
+        "forca": atributos.get("força", {}).get("base", 0),
+        "agilidade": atributos.get("agilidade", {}).get("base", 0),
+        "resistencia": atributos.get("resistencia", {}).get("base", 0),
+        "sentidos": atributos.get("sentidos", {}).get("base", 0),
+        "inteligencia": atributos.get("inteligencia", {}).get("base", 0),
+        "poder_magico": atributos.get("poder_magico", {}).get("base", 0)
+    }).execute()
+
+    # Cria log
+    log_data = {
+        'ficha_id': ficha['id'],
+        'usuario_id': usuario_id,
+        'motivo': dados.get('motivo', 'Atualização via formulário'),
+        'data': datetime.utcnow().isoformat()
+    }
     supabase.table('log_edicao').insert(log_data).execute()
-    
+
     flash('Ficha atualizada com sucesso!', 'success')
     return jsonify({'success': True, 'message': 'Ficha atualizada com sucesso!'})
-
 
 if __name__ == '__main__':
     app.run(debug=True)

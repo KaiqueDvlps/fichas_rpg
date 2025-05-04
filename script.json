@@ -1,0 +1,139 @@
+{
+  "motivo": "123",
+  "senha": "123",
+  "classe": "Mago", > ficha 
+  "classe_avancada": "Magoo", > ficha
+  "nivel": "", > ficha
+  "experiencia": "0", > ficha
+  "rank": "", > ficha
+  "lado": "nenhum", > ficha
+  "maestrias": [],> Maestrias
+  "tipos_lutador": [], > tipos_lutador
+  "titulos": [], > titulos
+  "passivas": [], > passivas
+  "habilidades": [], > habilidades
+  "atributos": [
+    { "nome": "força", "base": "0", "bonus": [] },
+    { "nome": "agilidade", "base": "0", "bonus": [] },
+    { "nome": "resistencia", "base": "0", "bonus": [] },
+    { "nome": "sentidos", "base": "0", "bonus": [] },
+    { "nome": "inteligencia", "base": "0", "bonus": [] },
+    { "nome": "poder_magico", "base": "0", "bonus": [] },
+    { "nome": "mp", "base": "0", "bonus": [] }
+  ], > atributos
+  "equipamentos": {
+    "cabeca": { "nome": "", "bonus": "" },
+    "corpo": [{ "nome": "", "bonus": "" }],
+    "acessorios": [], > acessorios 
+    "apoio": [],
+    "pernas": [],
+    "pes": [
+      { "nome": "", "bonus": "" },
+      { "nome": "", "bonus": "" }
+    ],
+    "maos": [{ "nome": "", "bonus": "" }],
+    "armas": [{ "nome": "", "bonus": "" }]
+  }, > equipamentos 
+  "inventario": { "wons": "0", "itens": [] } > Invetarios
+}
+
+
+itens apoio corrigir js
+
+acessorios:id|usuario_id|nome|bonus|tipo
+atributos:id|usuario_id|forca|agilidade|resistencia|sentidos|inteligencia|poder_magico
+
+create table public.equipamentos (
+  id serial not null,
+  usuario_id integer not null,
+  cabeca_nome text null,
+  cabeca_bonus text null,
+  corpo_1_nome text null,
+  corpo_1_bonus text null,
+  corpo_2_nome text null,
+  corpo_2_bonus text null,
+  pernas_1_nome text null,
+  pernas_1_bonus text null,
+  pernas_2_nome text null,
+  pernas_2_bonus text null,
+  pes_nome text null,
+  pes_bonus text null,
+  maos_nome text null,
+  maos_bonus text null,
+  arma_1_nome text null,
+  arma_1_bonus text null,
+  arma_2_nome text null,
+  arma_2_bonus text null,
+  constraint equipamentos_pkey primary key (id),
+  constraint equipamentos_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.habilidades (
+  id serial not null,
+  nome text not null,
+  usuario_id integer not null,
+  constraint habilidades_pkey primary key (id),
+  constraint habilidades_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.inventario (
+  id serial not null,
+  usuario_id integer not null,
+  nome text not null,
+  quantidade_total integer not null default 1,
+  quantidade_usada integer not null default 0,
+  constraint inventario_pkey primary key (id),
+  constraint inventario_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE,
+  constraint quantidade_valida check ((quantidade_usada <= quantidade_total))
+) TABLESPACE pg_default;
+
+create table public.itens_apoio (
+  id serial not null,
+  usuario_id integer not null,
+  nome text not null,
+  descricao text null,
+  constraint itens_apoio_pkey primary key (id),
+  constraint itens_apoio_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.maestrias (
+  id serial not null,
+  nome text not null,
+  treino integer null default 0,
+  duelo integer null default 0,
+  boss integer null default 0,
+  nivel integer null default 1,
+  usuario_id integer not null,
+  constraint maestrias_pkey primary key (id),
+  constraint maestrias_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.passivas (
+  id serial not null,
+  descricao text not null,
+  usuario_id integer null,
+  constraint passivas_pkey primary key (id),
+  constraint passivas_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.tipos_lutador (
+  id serial not null,
+  tipo text not null,
+  usuario_id integer null,
+  constraint tipos_lutador_pkey primary key (id),
+  constraint tipo_lutador_unico unique (tipo, usuario_id),
+  constraint tipos_lutador_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create table public.titulos (
+  id serial not null,
+  usuario_id integer not null,
+  nome text not null,
+  descricao text null,
+  constraint titulos_pkey primary key (id),
+  constraint titulos_usuario_id_fkey foreign KEY (usuario_id) references usuario (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+
+
+

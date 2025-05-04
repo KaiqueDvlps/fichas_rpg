@@ -3,34 +3,25 @@ document
   .addEventListener("click", async () => {
     console.log("Botão clicado!");
 
-    const motivoElem = document.getElementById("motivo-edicao");
-    const senhaElem = document.getElementById("senha-confirmacao");
-
-    if (!motivoElem || !senhaElem) {
-      console.error("Os campos motivo ou senha não foram encontrados no DOM!");
-      alert("Os campos motivo ou senha não estão presentes.");
-      return;
-    }
-
-    const motivo = motivoElem.value;
-    const senha = senhaElem.value;
+    const motivo = document.getElementById("motivo-edicao")?.value || "";
+    const senha = document.getElementById("senha-confirmacao")?.value || "";
 
     if (!motivo || !senha) {
-      console.log("Motivo ou senha não preenchidos!");
       alert("Preencha o motivo e a senha.");
       return;
     }
 
     const fichaData = {
-      motivo: motivo,
-      senha: senha,
+      motivo,
+      senha,
       classe: document.querySelector('input[name="classe"]')?.value || "",
       classe_avancada:
         document.querySelector('input[name="classe_avancada"]')?.value || "",
       nivel: document.querySelector('input[name="nivel"]')?.value || "",
-      experiencia:
-        document.querySelector('input[name="experiencia"]')?.value || "",
-      rank: document.querySelector('select[name="rank-select"]')?.value || "",
+      experiencia: Number(
+        document.querySelector('input[name="experiencia"]')?.value || 0
+      ),
+      rank: document.querySelector('select[name="rank"]')?.value || "",
       lado: document.querySelector('select[name="lado"]')?.value || "",
 
       maestrias: Array.from(
@@ -43,32 +34,102 @@ document
         nivel: item.querySelector('[name="nivel[]"]')?.value || "",
       })),
 
-      tipos_lutador: Array.from(
-        document.querySelectorAll("#lutadores-container .tipo-lutador")
+      tipos_lutador: [
+        {
+          tipo:
+            document.querySelector('input[name="tipo_lutador[]"]')?.value || "",
+        },
+      ],
+
+      titulos: Array.from(
+        document.querySelectorAll("#titulos-container .titulo-item")
       ).map((item) => ({
-        tipo: item.querySelector('input[name="tipo_lutador[]"]')?.value || "",
+        nome: item.querySelector("input")?.value || "",
       })),
+
+      passivas: Array.from(
+        document.querySelectorAll("#passivas-container .passiva-item")
+      ).map((item) => ({
+        nome: item.querySelector("input")?.value || "",
+      })),
+
+      habilidades: Array.from(
+        document.querySelectorAll("#habilidades-container .habilidade-item")
+      ).map((item) => ({
+        nome: item.querySelector("input")?.value || "",
+      })),
+
+      atributos: Array.from(document.querySelectorAll(".atributo-box")).map(
+        (box) => ({
+          nome: box.dataset.atributo,
+          base: box.querySelector(".base-input")?.value || "0",
+          bonus: Array.from(box.querySelectorAll(".bonus-container input")).map(
+            (input) => input.value || "0"
+          ),
+        })
+      ),
 
       equipamentos: {
         cabeca: {
           nome:
-            document.querySelector(
-              ".equipamento-grupo:nth-child(1) .input-equipamento-nome"
-            )?.value || "",
+            document.querySelector("#slot-cabeca .input-equipamento-nome")
+              ?.value || "",
           bonus:
-            document.querySelector(
-              ".equipamento-grupo:nth-child(1) .input-equipamento-bonus"
-            )?.value || "",
+            document.querySelector("#slot-cabeca .input-equipamento-bonus")
+              ?.value || "",
         },
         corpo: Array.from(
-          document.querySelectorAll(
-            ".equipamento-grupo:nth-child(2) .slot-equipamento"
-          )
+          document.querySelectorAll("#slot-corpo .slot-equipamento")
         ).map((item) => ({
           nome: item.querySelector(".input-equipamento-nome")?.value || "",
           bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
         })),
-        // Adicione outros grupos de equipamentos aqui se necessário
+        acessorios: Array.from(
+          document.querySelectorAll("#container-acessorios .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        apoio: Array.from(
+          document.querySelectorAll("#container-itemapoio .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          descricao:
+            item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        pernas: Array.from(
+          document.querySelectorAll("#slot-pernas .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        pes: Array.from(
+          document.querySelectorAll("#slot-pes .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        maos: Array.from(
+          document.querySelectorAll("#slot-maos .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+        armas: Array.from(
+          document.querySelectorAll("#slot-armas .slot-equipamento")
+        ).map((item) => ({
+          nome: item.querySelector(".input-equipamento-nome")?.value || "",
+          bonus: item.querySelector(".input-equipamento-bonus")?.value || "",
+        })),
+      },
+
+      inventario: {
+        wons: document.getElementById("wons")?.value || "0",
+        itens: Array.from(
+          document.querySelectorAll("#lista-itens .item-inventario")
+        ).map((item) => ({
+          nome: item.querySelector("input")?.value || "",
+        })),
       },
     };
 
@@ -87,8 +148,7 @@ document
 
       if (resultado.success) {
         alert(resultado.message);
-        // Se quiser redirecionar manualmente
-        window.location.href = `/ficha/${fichaData.usuario_id}`;
+        window.location.href = `/ficha/${resultado.usuario_id}`;
       } else {
         alert("Erro ao salvar ficha!");
       }
@@ -101,19 +161,3 @@ document
       );
     }
   });
-
-// Função para mostrar alertas personalizados
-function showCustomAlert(title, message, type) {
-  const alertBox = document.createElement("div");
-  alertBox.className = `custom-alert ${type}`;
-  alertBox.innerHTML = `
-    <h3>${title}</h3>
-    <p>${message}</p>
-    <button onclick="this.parentElement.remove()">OK</button>
-  `;
-  document.body.appendChild(alertBox);
-
-  setTimeout(() => {
-    alertBox.remove();
-  }, 5000);
-}

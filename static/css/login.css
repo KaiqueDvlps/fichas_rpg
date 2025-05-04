@@ -1,90 +1,291 @@
-/* Reset Básico */
+/* Estilo Épico - Solo Leveling Theme */
+:root {
+  --void-color: #0a0a12;
+  --shadow-color: #3d1a6b;
+  --rpg-blue: #1e3a8a;
+  --rpg-gold: #d4af37;
+  --rpg-red: #8b0000;
+  --text-glow: #e2e8f0;
+}
+
+@font-face {
+  font-family: "RPG Font";
+  src: url("/static/fonts/magic-font.ttf") format("truetype");
+}
+
 * {
   margin: 0;
   padding: 0;
+  margin: 10px auto;
   box-sizing: border-box;
-  font-family: "Arial", sans-serif;
 }
 
 body {
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  font-family: "RPG Font", "Arial", sans-serif;
+  background: radial-gradient(
+      circle at center,
+      rgba(30, 58, 138, 0.2) 0%,
+      rgba(10, 10, 18, 1) 100%
+    ),
+    url("/static/imagens/logo.png") no-repeat center center fixed;
+  background-size: cover;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-}
-
-/* Card de Login */
-.login-container {
-  width: 100%;
-  max-width: 400px;
-}
-
-.login-card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  color: var(--text-glow);
+  text-shadow: 0 0 10px rgba(226, 232, 240, 0.7);
   overflow: hidden;
 }
 
+/* Efeito de partículas mágicas */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("/static/images/magic-particles.png");
+  opacity: 0.3;
+  z-index: -1;
+  animation: float 15s infinite linear;
+}
+
+@keyframes float {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 1000px 1000px;
+  }
+}
+
+.login-container {
+  width: 100%;
+  max-width: 500px;
+  perspective: 1000px;
+}
+
+.login-card {
+  background: rgba(10, 10, 18, 0.8);
+  border-radius: 15px;
+  border: 2px solid var(--rpg-gold);
+  box-shadow: 0 0 25px var(--shadow-color), inset 0 0 15px var(--rpg-blue);
+  overflow: hidden;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  backdrop-filter: blur(5px);
+}
+
+.login-card:hover {
+  transform: rotateY(5deg) rotateX(5deg);
+}
+
+.login-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    transparent 45%,
+    var(--rpg-gold) 50%,
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.5s;
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+
 .login-header {
-  background: linear-gradient(135deg, #4a6cf7, #8a63ee);
-  color: white;
-  padding: 20px;
+  background: linear-gradient(to right, var(--void-color), var(--rpg-blue));
+  color: var(--rpg-gold);
+  padding: 25px;
   text-align: center;
+  border-bottom: 2px solid var(--rpg-gold);
+  position: relative;
 }
 
 .login-header h2 {
-  font-size: 1.5rem;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: textGlow 2s infinite alternate;
 }
 
-/* Formulário */
+@keyframes textGlow {
+  from {
+    text-shadow: 0 0 10px var(--rpg-gold);
+  }
+  to {
+    text-shadow: 0 0 20px var(--rpg-gold), 0 0 30px var(--rpg-red);
+  }
+}
+
 .login-form {
-  padding: 20px;
+  padding: 30px;
 }
 
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  position: relative;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-weight: bold;
-  color: #333;
+  color: var(--rpg-gold);
+  font-size: 1.1rem;
 }
 
 .input-group input {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
+  padding: 15px;
+  background: rgba(30, 58, 138, 0.3);
+  border: 1px solid var(--rpg-gold);
   border-radius: 5px;
   font-size: 1rem;
-  transition: all 0.3s;
+  color: var(--text-glow);
+  transition: all 0.3s ease;
 }
 
 .input-group input:focus {
-  border-color: #4a6cf7;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+  border-color: var(--rpg-red);
+  box-shadow: 0 0 15px var(--rpg-red);
+  background: rgba(139, 0, 0, 0.3);
 }
 
-/* Botão */
+.input-group::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--rpg-gold);
+  transition: width 0.3s ease;
+}
+
+.input-group:focus-within::after {
+  width: 100%;
+}
+
 .login-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #4a6cf7, #8a63ee);
-  color: white;
-  border: none;
+  padding: 15px;
+  background: linear-gradient(
+    to right,
+    var(--void-color),
+    var(--rpg-blue),
+    var(--void-color)
+  );
+  color: var(--rpg-gold);
+  border: 1px solid var(--rpg-gold);
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
 .login-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(74, 108, 247, 0.4);
+  background: linear-gradient(
+    to right,
+    var(--rpg-blue),
+    var(--void-color),
+    var(--rpg-blue)
+  );
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px var(--shadow-color);
+}
+
+.login-btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    transparent 45%,
+    var(--rpg-gold) 50%,
+    transparent 55%
+  );
+  transform: rotate(45deg);
+  animation: btnShine 3s infinite;
+  opacity: 0.5;
+}
+
+@keyframes btnShine {
+  0% {
+    left: -100%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Efeito de runas flutuantes */
+.rune {
+  position: absolute;
+  opacity: 0.1;
+  font-size: 2rem;
+  animation: floatRune 15s infinite linear;
+  z-index: -1;
+}
+
+@keyframes floatRune {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+  }
+}
+
+/* Adicionando runas específicas */
+.rune:nth-child(1) {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+.rune:nth-child(2) {
+  top: 20%;
+  right: 15%;
+  animation-delay: 2s;
+}
+.rune:nth-child(3) {
+  bottom: 15%;
+  left: 20%;
+  animation-delay: 4s;
 }
