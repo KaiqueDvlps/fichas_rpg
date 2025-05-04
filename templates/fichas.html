@@ -69,6 +69,7 @@
           <option value="A" {% if ficha.rank=='A' %}selected{% endif %}>Rank A</option>
           <option value="S" {% if ficha.rank=='S' %}selected{% endif %}>Rank S</option>
         </select>
+
       </div>
 
       <!-- ABA 4 -->
@@ -94,7 +95,7 @@
       <div id="maestria" class="tab">
         <h2>Maestrias</h2>
         <div id="maestrias-container">
-          {% for maestria in ficha.maestria %}
+          {% for maestria in maestrias %}
           <div class="maestria-item">
             <input type="text" name="nome_maestria[]" placeholder="Nome da Maestria" value="{{ maestria.nome }}">
             <input type="text" name="treino[]" placeholder="Treino (Ex: 0/20)" value="{{ maestria.treino }}">
@@ -113,10 +114,12 @@
         <h2>Tipo de Lutador</h2>
         <div id="lutadores-container">
           <!-- Campos aparecerão aqui após clique -->
-        
+
 
           <div class="lutador-item">
-            <input type="text" name="tipo_lutador[]" placeholder="Tipo do Lutador" value="{{tipos_lutador[0]['tipo']}}">
+            <input type="text" name="tipo_lutador[]" placeholder="Tipo do Lutador"
+              value="{{ tipos_lutador[0]['tipo'] if tipos_lutador and tipos_lutador[0] is not none and 'tipo' in tipos_lutador[0] else '' }}">
+
           </div>
         </div>
         <button type="button" id="btn-adicionar-lutador" class="btn-add-tlutador">Adicionar Tipo Lutador</button>
@@ -127,7 +130,16 @@
       <div id="titulos" class="tab">
         <h2>Títulos</h2>
         <div id="titulos-container">
-          <!-- Títulos adicionados vão aparecer aqui -->
+          {% for titulo in titulos %}
+          <script>
+            // Chama a função para adicionar cada título existente ao carregar a página
+            document.addEventListener('DOMContentLoaded', function () {
+              adicionarTitulo("{{ titulo['nome'] }}");
+            });
+          </script>
+          {% endfor %}
+
+
         </div>
         <button type="button" class="btn-add-titulo" onclick="adicionarTitulo()">
           <i>+</i> Adicionar Título
@@ -138,7 +150,15 @@
       <div id="passivas" class="tab">
         <h2>Passivas</h2>
         <div id="passivas-container">
-          <!-- Passivas adicionadas vão aparecer aqui -->
+          {% for passiva in passivas %}
+          <script>
+            // Chama a função para adicionar cada título existente ao carregar a página
+            document.addEventListener('DOMContentLoaded', function () {
+              adicionarPassiva("{{ passiva['descricao'] }}");
+            });
+          </script>
+          {% endfor %}
+
         </div>
         <button type="button" class="btn-add-passiva" onclick="adicionarPassiva()">
           <i>+</i> Adicionar Passiva
@@ -149,7 +169,16 @@
       <div id="habilidades" class="tab">
         <h2>Habilidades</h2>
         <div id="habilidades-container">
-          <!-- Habilidades adicionadas vão aparecer aqui -->
+
+
+          {% for habilidade in habilidades %}
+          <script>
+            // Chama a função para adicionar cada título existente ao carregar a página
+            document.addEventListener('DOMContentLoaded', function () {
+              adicionarHabilidade("{{ habilidade['nome'] }}");
+            });
+          </script>
+          {% endfor %}
         </div>
         <button type="button" class="btn-add-hab" onclick="adicionarHabilidade()">
           <i>+</i> Adicionar Habilidade
@@ -160,32 +189,35 @@
       <!-- ABA 10 - ATRIBUTOS (VERSÃO MODIFICADA PARA MP) -->
       <div id="atributos" class="tab">
         <h2>Atributos</h2>
-        {% for atributo in ['força', 'agilidade', 'resistencia', 'sentidos', 'inteligencia', 'poder_magico', 'mp'] %}
+        {% for atributo in ['forca', 'agilidade', 'resistencia', 'sentidos', 'inteligencia', 'poder_magico'] %}
         <div class="atributo-box" data-atributo="{{ atributo }}">
-          {% if atributo == 'mp' %}
-          <!-- VERSÃO ESPECIAL PARA MP -->
-          <label class="mp-label"><strong>MP</strong></label>
-          <div class="mp-display">
-            <span class="mp-text">Seu MP atual é: </span>
-            <span class="calc-text mp-value">0</span>
-          </div>
-          {% else %}
-
           <!-- VERSÃO NORMAL PARA OUTROS ATRIBUTOS -->
           <label><strong>{{ atributo|capitalize }}</strong></label>
           <div class="atributo-inputs">
-            <input type="number" class="base-input" placeholder="Valor base" min="0" />
+            <input type="number" class="base-input" placeholder="Valor base" min="0"
+              value="{{ atributos[atributo] }}" /> <!-- Aqui estamos acessando diretamente o atributo -->
             <div class="bonus-container"></div>
             <button type="button" class="btn-add-bonus">+ Bônus</button>
           </div>
           <div class="resultado">
             Resultado: <span class="calc-text">0</span>
           </div>
-          {% endif %}
         </div>
         {% endfor %}
+
+        <!-- VERSÃO ESPECIAL PARA MP -->
+        <div class="atributo-box" data-atributo="mp">
+          <label class="mp-label"><strong>MP</strong></label>
+          <div class="mp-display">
+            <span class="mp-text">Seu MP atual é: </span>
+            <span class="calc-text mp-value">0</span>
+          </div>
+        </div>
       </div>
-      <!--Aba 11 Equipamento-->
+
+
+
+      <!-- Aba 11 Equipamento -->
       <div id="equipamento-container" class="tab">
         <h2>Equipamentos</h2>
 
@@ -193,8 +225,10 @@
         <div id="slot-cabeca" class="equipamento-grupo">
           <h3>Slot de Cabeça</h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Elmo de Ferro" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus (Ex: +10 Força)" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Elmo de Ferro" class="input-equipamento-nome"
+              value="{{ equipamentos['cabeca_nome'] }}">
+            <input type="text" placeholder="Bônus (Ex: +10 Força)" class="input-equipamento-bonus"
+              value="{{ equipamentos['cabeca_bonus'] }}">
           </div>
         </div>
 
@@ -202,12 +236,16 @@
         <div id="slot-corpo" class="equipamento-grupo">
           <h3>Slot de Corpo</h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Armadura Leve" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Armadura Leve" class="input-equipamento-nome"
+              value="{{ equipamentos['corpo_1_nome']}}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['corpo_1_bonus']}}">
           </div>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Capa de Couro" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Capa de Couro" class="input-equipamento-nome"
+              value="{{ equipamentos['corpo_2_nome']}}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['corpo_2_bonus']}}">
           </div>
         </div>
 
@@ -233,12 +271,16 @@
         <div id="slot-pernas" class="equipamento-grupo">
           <h3>Slot de Pernas</h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Calça de Couro" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Calça de Couro" class="input-equipamento-nome"
+              value="{{ equipamentos['pernas_1_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['pernas_1_bonus'] }}">
           </div>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Joelheira de Aço" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Joelheira de Aço" class="input-equipamento-nome"
+              value="{{ equipamentos['pernas_2_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['pernas_2_bonus'] }}">
           </div>
         </div>
 
@@ -246,8 +288,10 @@
         <div id="slot-pes" class="equipamento-grupo">
           <h3>Slot de Pés</h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Botas de Velocidade" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Botas de Velocidade" class="input-equipamento-nome"
+              value="{{ equipamentos['pes_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['pes_bonus'] }}">
           </div>
         </div>
 
@@ -255,8 +299,10 @@
         <div id="slot-maos" class="equipamento-grupo">
           <h3>Slot de Mãos</h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Luvas de Couro" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Luvas de Couro" class="input-equipamento-nome"
+              value="{{ equipamentos['maos_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['maos_bonus'] }}">
           </div>
         </div>
 
@@ -264,12 +310,16 @@
         <div id="slot-armas" class="equipamento-grupo">
           <h3>Slot de Armas <small>[Armas grandes ocupam dois slots]</small></h3>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Espada Longa" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Espada Longa" class="input-equipamento-nome"
+              value="{{ equipamentos['arma_1_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['arma_1_bonus'] }}">
           </div>
           <div class="slot-equipamento">
-            <input type="text" placeholder="Ex: Escudo Médio" class="input-equipamento-nome">
-            <input type="text" placeholder="Bônus" class="input-equipamento-bonus">
+            <input type="text" placeholder="Ex: Escudo Médio" class="input-equipamento-nome"
+              value="{{ equipamentos['arma_2_nome'] }}">
+            <input type="text" placeholder="Bônus" class="input-equipamento-bonus"
+              value="{{ equipamentos['arma_2_bonus'] }}">
           </div>
         </div>
       </div>

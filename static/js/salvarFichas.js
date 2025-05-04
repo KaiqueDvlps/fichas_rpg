@@ -35,26 +35,25 @@ document
       })),
 
       tipos_lutador: [
-        {
-          tipo:
-            document.querySelector('input[name="tipo_lutador[]"]')?.value || "",
-        },
+
+        document.querySelector('input[name="tipo_lutador[]"]')?.value || "",
+
       ],
 
       titulos: Array.from(
-        document.querySelectorAll("#titulos-container .titulo-item")
+        document.querySelectorAll("#titulos-container .maestria-item")
       ).map((item) => ({
         nome: item.querySelector("input")?.value || "",
       })),
 
-      passivas: Array.from(
-        document.querySelectorAll("#passivas-container .passiva-item")
-      ).map((item) => ({
-        nome: item.querySelector("input")?.value || "",
-      })),
+      passivas: Array.from(document.querySelectorAll("#passivas-container .maestria-item"))
+        .map((item) => ({
+          nome: item.querySelector("input")?.value || "",
+        })),
+
 
       habilidades: Array.from(
-        document.querySelectorAll("#habilidades-container .habilidade-item")
+        document.querySelectorAll("#habilidades-container .maestria-item")
       ).map((item) => ({
         nome: item.querySelector("input")?.value || "",
       })),
@@ -133,7 +132,6 @@ document
       },
     };
 
-    console.log("Dados da ficha:", fichaData);
 
     try {
       const resposta = await fetch("/salvar_ficha", {
@@ -148,7 +146,7 @@ document
 
       if (resultado.success) {
         alert(resultado.message);
-        window.location.href = `/ficha/${resultado.usuario_id}`;
+        window.location.href = `/ficha/${resultado.usuario_id}/editar`;
       } else {
         alert("Erro ao salvar ficha!");
       }
